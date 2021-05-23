@@ -14,7 +14,29 @@ tinymce.init({
     'removeformat | help',
     content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
   });
+  
+  const enviarProfeOak= async function(){
+    let nro=this.nro;
+    let res = await Swal.fire({
+      title: "Realmente desea continuar?",
+      text: "Esta intentando enviar el pokemon al profesor oak, esto no se puede revertir",
+      icon:"warning",
+      showCancelButton:true,
+      confirmButtonText:"Si, hazlo!"
+    });
 
+    if(res.isConfirmed){
+      pokemones.splice(nro,1);
+      cargarTabla();
+      Swal.fire("Pokemon descartado","Pokemon enviado al profesor","info");
+    }else{
+      Swal.fire("Cancelado","Operacion cancelada", "error");
+    }
+ 
+    
+    //siempre this me devuelve una referencia al elemento que llamo la funcion
+  };
+  
   const pokemones = []; //esto genera una constante, lo que hace que no pueda ser sobreescrito / definir un arreglo
   const cargarTabla = ()=>{
     //1.- Obtener una referencia a la tabla
@@ -58,7 +80,13 @@ tinymce.init({
 
       tdDescripcion.innerHTML = p.descripcion;
       //TO-DO: que hago con la acciones!
-    
+      let boton = document.createElement("button");
+      boton.classList.add("btn","btn-danger");
+      boton.innerText="Enviar al profesor oak";
+      boton.nro=i;
+      tdAcciones.appendChild(boton);
+      tdAcciones.classList.add("text-center");
+      boton.addEventListener("click", enviarProfeOak);
       //5.- Agregar los td al tr
       tr.appendChild(tdNro);
       tr.appendChild(tdNombre);
@@ -71,7 +99,7 @@ tinymce.init({
     }
   };
 
-document.querySelector("#registrar-btn").addEventListener("click", ()=>{
+  document.querySelector("#registrar-btn").addEventListener("click", ()=>{
     let nombre = document.querySelector("#nombre-txt").value;
     let tipo = document.querySelector("#tipo-select").value;
     let legendario = document.querySelector("#legendario-si").checked;
